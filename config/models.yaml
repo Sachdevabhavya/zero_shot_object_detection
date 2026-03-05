@@ -1,0 +1,4 @@
+paths:
+  yolo_model: "yolov8s-world.pt"
+  sam_checkpoint: "models/checkpoints/sam_vit_h_4b8939.pth" # Original, heavier SAM model
+  depth_model: "LiheYoung/depth-anything-small-hf"
