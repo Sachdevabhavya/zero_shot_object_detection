@@ -15,7 +15,7 @@ ultralytics                 # For YOLO-World
 transformers                # For Depth Anything
 accelerate                  # Required for efficient inference with Transformers
 
-# Segment Anything (Official Repo)
+# Segment Anything 
 git+https://github.com/facebookresearch/segment-anything.git
 
 # Optional for specialized math
