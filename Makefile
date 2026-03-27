@@ -6,7 +6,7 @@ PYTHON = python3
 PIP = pip3
 REQUIREMENTS = requirements.txt
 
-# --- Variables (Override these in terminal) ---
+# --- Variables  ---
 IMAGE ?= data/input/test_image.jpg
 PROMPT ?= "sofa"
 OUTPUT_DIR ?= data/output
