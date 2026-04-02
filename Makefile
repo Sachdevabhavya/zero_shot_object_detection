@@ -8,12 +8,11 @@ REQUIREMENTS = requirements.txt
 
 # --- Variables  ---
 IMAGE ?= data/input/test_image_1.jpg
-PROMPT ?= "chair"
+PROMPT ?= chair
 OUTPUT_DIR ?= data/output
 CONFIDENCE ?= 0.0001
 MODEL ?= all
 EPOCHS ?= 10
-SAVE_INTERMEDIATES ?= 0
 
 .PHONY: setup install download_models download_dataset run train clean help
 
@@ -29,10 +28,9 @@ help:
 	@echo "  make clean            - Remove output files and caches"
 	@echo ""
 	@echo "  Optional flags:"
-	@echo "    PROMPT=<text>       - Object to detect (default: chair)"
-	@echo "    IMAGE=<path>        - Input image path"
-	@echo "    SAVE_INTERMEDIATES=1 - Save detection, mask, depth outputs"
-	@echo "  Example: make run PROMPT='chair' SAVE_INTERMEDIATES=1"
+	@echo "    PROMPT=<text>   - Object to detect (default: chair)"
+	@echo "    IMAGE=<path>    - Input image path"
+	@echo "  Example: make run PROMPT='chair'"
 	@echo "----------------------------------------------------------------"
 
 setup:
@@ -61,12 +59,8 @@ run:
 	@echo "[*] Running Zero-Shot 3D Pipeline..."
 	@echo "	Input: $(IMAGE)"
 	@echo "	Prompt: $(PROMPT)"
-	@if [ "$(SAVE_INTERMEDIATES)" = "1" ]; then \
-		echo "	Saving intermediate outputs: detection, mask, depth"; \
-		$(PYTHON) main_inference.py --image_path "$(IMAGE)" --prompt "$(PROMPT)" --output_dir "$(OUTPUT_DIR)" --save_intermediates; \
-	else \
-		$(PYTHON) main_inference.py --image_path "$(IMAGE)" --prompt "$(PROMPT)" --output_dir "$(OUTPUT_DIR)"; \
-	fi
+	@echo "	Saving all outputs: detection, mask, depth, pointcloud (PLY & JPG)"
+	$(PYTHON) main_inference.py --image_path "$(IMAGE)" --prompt "$(PROMPT)" --output_dir "$(OUTPUT_DIR)" 2>&1
 
 train:
 	@echo "[*] Starting Training for model(s): $(MODEL)"
