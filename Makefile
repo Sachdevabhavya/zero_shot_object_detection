@@ -7,12 +7,13 @@ PIP = pip3
 REQUIREMENTS = requirements.txt
 
 # --- Variables  ---
-IMAGE ?= data/input/test_image.jpg
-PROMPT ?= "sofa"
+IMAGE ?= data/input/test_image_1.jpg
+PROMPT ?= "chair"
 OUTPUT_DIR ?= data/output
 CONFIDENCE ?= 0.0001
 MODEL ?= all
 EPOCHS ?= 10
+SAVE_INTERMEDIATES ?= 0
 
 .PHONY: setup install download_models download_dataset run train clean help
 
@@ -20,12 +21,18 @@ EPOCHS ?= 10
 
 help:
 	@echo "----------------------------------------------------------------"
-	@echo "  make setup			 - Install dependencies & create folders"
+	@echo "  make setup            - Install dependencies & create folders"
 	@echo "  make download_models   - Download SAM weights (Run once)"
 	@echo "  make download_dataset  - Download & extract NYU Prompt 331 dataset"
-	@echo "  make run			   - Run inference (generate 3D)"
-	@echo "  make train			 - Train/Fine-tune models locally"
-	@echo "  make clean			 - Remove output files and caches"
+	@echo "  make run              - Run inference (generate 3D)" 
+	@echo "  make train            - Train/Fine-tune models locally"
+	@echo "  make clean            - Remove output files and caches"
+	@echo ""
+	@echo "  Optional flags:"
+	@echo "    PROMPT=<text>       - Object to detect (default: chair)"
+	@echo "    IMAGE=<path>        - Input image path"
+	@echo "    SAVE_INTERMEDIATES=1 - Save detection, mask, depth outputs"
+	@echo "  Example: make run PROMPT='chair' SAVE_INTERMEDIATES=1"
 	@echo "----------------------------------------------------------------"
 
 setup:
@@ -54,7 +61,12 @@ run:
 	@echo "[*] Running Zero-Shot 3D Pipeline..."
 	@echo "	Input: $(IMAGE)"
 	@echo "	Prompt: $(PROMPT)"
-	$(PYTHON) main_inference.py --image_path "$(IMAGE)" --prompt "$(PROMPT)" --output_dir "$(OUTPUT_DIR)"
+	@if [ "$(SAVE_INTERMEDIATES)" = "1" ]; then \
+		echo "	Saving intermediate outputs: detection, mask, depth"; \
+		$(PYTHON) main_inference.py --image_path "$(IMAGE)" --prompt "$(PROMPT)" --output_dir "$(OUTPUT_DIR)" --save_intermediates; \
+	else \
+		$(PYTHON) main_inference.py --image_path "$(IMAGE)" --prompt "$(PROMPT)" --output_dir "$(OUTPUT_DIR)"; \
+	fi
 
 train:
 	@echo "[*] Starting Training for model(s): $(MODEL)"
